@@ -63,11 +63,3 @@ public abstract class AbstractLabelMultisetLoader implements CacheLoader< Long, 
 		return new Cell< VolatileLabelMultisetArray >( cellSize, cellMin, new VolatileLabelMultisetArray( data, listData, true ) );
 	}
 }
-
-// Could you clarify what the Cell<VolatileLabelMultisetArray> returned by AbstractLabelMultisetLoader's get(long) method is supposed to contain?
-// Should the VolatileLabelMultisetArray correspond to a single LabelMultisetEntryList, summarizing the counts and ids of everything within that "Cell"?
-
-
-
-
-
