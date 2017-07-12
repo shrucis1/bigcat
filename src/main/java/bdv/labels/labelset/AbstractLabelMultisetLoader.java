@@ -7,6 +7,13 @@ import net.imglib2.img.cell.Cell;
 import net.imglib2.img.cell.CellGrid;
 import net.imglib2.util.Intervals;
 
+/**
+ * A type of {@link CacheLoader} that loads a {@link Cell} of
+ * {@link VolatileLabelMultisetArray} from a {@link Long} index
+ * and an underlying {@code byte[]}, whose source is determined
+ * by subclasses
+ * @author Neil Thistlethwaite
+ */
 public abstract class AbstractLabelMultisetLoader implements CacheLoader< Long, Cell< VolatileLabelMultisetArray > >
 {
 	
@@ -27,14 +34,15 @@ public abstract class AbstractLabelMultisetLoader implements CacheLoader< Long, 
 		int[] cellSize = new int[ numDimensions ];
 		long[] gridPosition = new long[ numDimensions ];
 		int[] cellDimensions = new int[ numDimensions ]; 
+		
 		grid.cellDimensions(cellDimensions);
+
+		grid.getCellDimensions( key, cellMin, cellSize );
 						
 		for ( int i = 0; i < numDimensions; ++i )
 		{
 			gridPosition[ i ] = cellMin[ i ] / cellDimensions[ i ];
 		}
-
-		grid.getCellDimensions( key, cellMin, cellSize );
 		
 		byte[] bytes = this.getData(gridPosition);
 		
@@ -55,3 +63,11 @@ public abstract class AbstractLabelMultisetLoader implements CacheLoader< Long, 
 		return new Cell< VolatileLabelMultisetArray >( cellSize, cellMin, new VolatileLabelMultisetArray( data, listData, true ) );
 	}
 }
+
+// Could you clarify what the Cell<VolatileLabelMultisetArray> returned by AbstractLabelMultisetLoader's get(long) method is supposed to contain?
+// Should the VolatileLabelMultisetArray correspond to a single LabelMultisetEntryList, summarizing the counts and ids of everything within that "Cell"?
+
+
+
+
+
