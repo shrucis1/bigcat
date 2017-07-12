@@ -64,32 +64,24 @@ public class RandomAccessibleLoaderTest {
 		// test all positions in cell0
 		randAccess.setPosition(new int[] {0, 0, 0});
 		assert2x2Cell(0, randAccess.getCell().getData());
-		
 		randAccess.setPosition(new int[] {1, 0, 0});
 		assert2x2Cell(0, randAccess.getCell().getData());
-		
 		randAccess.setPosition(new int[] {0, 1, 0});
 		assert2x2Cell(0, randAccess.getCell().getData());
-		
 		randAccess.setPosition(new int[] {1, 1, 0});
 		assert2x2Cell(0, randAccess.getCell().getData());
 		
-
 		// test all positions in cell1
 		randAccess.setPosition(new int[] {2, 0, 0});
 		assert2x2Cell(1, randAccess.getCell().getData());
-		
 		randAccess.setPosition(new int[] {2, 1, 0});
 		assert2x2Cell(1, randAccess.getCell().getData());
 		
-
 		// test all positions in cell2
 		randAccess.setPosition(new int[] {0, 2, 0});
 		assert2x2Cell(2, randAccess.getCell().getData());
-		
 		randAccess.setPosition(new int[] {1, 2, 0});
 		assert2x2Cell(2, randAccess.getCell().getData());
-
 
 		// test all positions in cell3
 		randAccess.setPosition(new int[] {2, 2, 0});
