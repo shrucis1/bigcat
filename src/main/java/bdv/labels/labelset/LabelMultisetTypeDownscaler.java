@@ -15,22 +15,21 @@ public class LabelMultisetTypeDownscaler {
 	}
 	
 	public static VolatileLabelMultisetArray createDownscaledCell(RandomAccessibleInterval<LabelMultisetType> source, int[] factor) {
+		
 		RandomAccess<LabelMultisetType> randomAccess = source.randomAccess();
+		
 		final int numDim = source.numDimensions();
 		final long[] maxOffset = new long[numDim];
-		final long[] minOffset = new long[numDim];
 		final long[] cellOffset = new long[numDim]; // not in units of cells
 		final long[] totalOffset = new long[numDim]; // absolute, inside of cell
 		
 		for(int i = 0; i < numDim; i ++) {
-			minOffset[i] = source.min(i);
-			cellOffset[i] = minOffset[i];
 			maxOffset[i] = source.max(i) + 1; // interval is inclusive
 		}
 		
 		int numDownscaledLists = 1;
 		for(int i = 0; i < numDim; i ++) {
-			numDownscaledLists *= (long)Math.ceil((maxOffset[i]-minOffset[i])/factor[i]);
+			numDownscaledLists *= (long)Math.ceil((maxOffset[i])/factor[i]);
 		}
 		final int[] data = new int[numDownscaledLists];
 		
@@ -42,6 +41,8 @@ public class LabelMultisetTypeDownscaler {
 		final LabelMultisetEntry entry = new LabelMultisetEntry( 0, 1 );
 		int nextListOffset = 0;
 		int o = 0;
+		
+		int searchIndex;
 				
 		for(int d = 0; d < numDim;)
 		{
@@ -57,12 +58,17 @@ public class LabelMultisetTypeDownscaler {
 				randomAccess.setPosition(totalOffset);
 				for(Entry<Label> sourceEntry : randomAccess.get().entrySet())
 				{
-					entry.setId( sourceEntry.getElement().id() );
-					entry.setCount( sourceEntry.getCount() );
-					list.add( entry );
+					searchIndex = list.binarySearch( sourceEntry.getElement().id() );
+					if(list.size()>0 && searchIndex >= 0) {
+						// just add 1 to the count of existing label
+						list.get(searchIndex).setCount(list.get(searchIndex).getCount() + 1);
+					} else {
+						entry.setId( sourceEntry.getElement().id() );
+						entry.setCount( sourceEntry.getCount() );
+						list.add( entry );
+						list.sortById();
+					}
 				}
-				
-				
 				
 				for(g = 0; g < numDim; g++)
 				{
@@ -84,14 +90,14 @@ public class LabelMultisetTypeDownscaler {
 					if ( list.equals( list2 ) )
 					{
 						makeNewList = false;
-						data[ o ] = listHashesAndOffsets.get( i + 1 ) ;
+						data[ o++ ] = listHashesAndOffsets.get( i + 1 ) ;
 						break;
 					}
 				}
 			}
 			if ( makeNewList )
 			{
-				data[ o ] = nextListOffset;
+				data[ o++ ] = nextListOffset;
 				listHashesAndOffsets.add( hash );
 				listHashesAndOffsets.add( nextListOffset );
 				nextListOffset += list.getSizeInBytes();
@@ -104,7 +110,7 @@ public class LabelMultisetTypeDownscaler {
 				if(cellOffset[d] < maxOffset[d])
 					break;
 				else
-					cellOffset[d] = minOffset[d];
+					cellOffset[d] = 0;
 			}
 		}
 		return new VolatileLabelMultisetArray( data, listData, true );
