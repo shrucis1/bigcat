@@ -1,5 +1,7 @@
 package bdv.labels.labelset;
 
+import java.nio.ByteBuffer;
+
 import bdv.labels.labelset.Multiset.Entry;
 import gnu.trove.list.array.TIntArrayList;
 import net.imglib2.Interval;
@@ -29,7 +31,7 @@ public class LabelMultisetTypeDownscaler {
 		
 		int numDownscaledLists = 1;
 		for(int i = 0; i < numDim; i ++) {
-			numDownscaledLists *= (long)Math.ceil((maxOffset[i])/factor[i]);
+			numDownscaledLists *= (long)Math.ceil(((double)maxOffset[i])/factor[i]);
 		}
 		final int[] data = new int[numDownscaledLists];
 		
@@ -113,6 +115,26 @@ public class LabelMultisetTypeDownscaler {
 					cellOffset[d] = 0;
 			}
 		}
-		return new VolatileLabelMultisetArray( data, listData, true );
+		return new VolatileLabelMultisetArray( data, listData, nextListOffset, true );
 	}
+	
+	public static int getSerializedVolatileLabelMultisetArraySize(VolatileLabelMultisetArray array) {
+		return (int) (array.getCurrentStorageArray().length * Integer.BYTES + array.getListDataUsedSizeInBytes());
+	}
+
+	public static void serializeVolatileLabelMultisetArray(VolatileLabelMultisetArray array, byte[] bytes) {
+
+		int[] curStorage = array.getCurrentStorageArray();
+		long[] data = ((LongMappedAccessData)array.getListData()).data;
+		
+		ByteBuffer bb = ByteBuffer.wrap(bytes);
+		
+		for ( final int d : curStorage )
+			bb.putInt(d);
+		
+		for( long i = 0; i < array.getListDataUsedSizeInBytes(); i ++)
+			bb.put(ByteUtils.getByte(data, i));
+		
+	}
+	
 }
