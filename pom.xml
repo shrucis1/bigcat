@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>bigdataviewer-vistools</artifactId>
-			<version>1.0.0-beta-4</version>
+			<version>1.0.0-beta-6</version>
 		</dependency>
 		<dependency>
 			<groupId>net.imagej</groupId>
@@ -140,7 +140,12 @@
 			<id>imagej.public</id>
 			<url>http://maven.imagej.net/content/groups/public</url>
 		</repository>
+    	<repository>
+        	<id>saalfeld-lab-maven-repo</id>
+        	<url>https://saalfeldlab.github.io/maven</url>
+    	</repository>
 	</repositories>
+	
 
 	<scm>
 		<connection>scm:git:git://github.com/saalfeldlab/bigcat</connection>
