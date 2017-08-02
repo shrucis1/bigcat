@@ -67,4 +67,25 @@ public class LabelUtils {
 		
 		return bytes;
 	}
+
+	public static LabelMultisetType getOutOfBounds() {
+		return getOutOfBounds(1);
+	}
+	
+	public static LabelMultisetType getOutOfBounds(int count) {
+		
+		final LongMappedAccessData listData = LongMappedAccessData.factory.createStorage( 32 );
+
+		final LabelMultisetEntryList list = new LabelMultisetEntryList( listData, 0 );
+		final LabelMultisetEntry entry = new LabelMultisetEntry( 0, 1 );
+
+		list.createListAt( listData, 0 );
+		entry.setId(Label.OUTSIDE);
+		entry.setCount(count);
+		list.add( entry );
+		
+		int[] data = new int[] {0};
+		
+		return new LabelMultisetType(new VolatileLabelMultisetArray( data, listData, true ));
+	}
 }
